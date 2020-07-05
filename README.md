@@ -4,7 +4,7 @@
 
 ![Alt Text](https://github.com/teunisvdh/BTP-BIQA/blob/master/doc/Application%20Thesis%20Images%20Flower.png)
 
-##### Research findings
+### Research findings
 
 1.	Deep learning-based BIQA models are powerful, for the reason that they facilitate end-to-end-learning as well as content aware quality assessment. 
 
@@ -17,7 +17,7 @@
     *	Perceived performance is not the only characteristic influencing model preference;
     *	Users prefer a model that is transparent, explainable and adaptable to their needs.
 
-##### Main contents of this repository 
+### Main contents of this repository 
 | File | Description |
 | --- | --- |
 | Clean Quality Decision Tree.ipynb | Training the technical quality decision tree by extracting 16 features. | 
