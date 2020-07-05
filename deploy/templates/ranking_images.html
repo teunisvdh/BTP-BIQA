@@ -1,0 +1,289 @@
+<html>
+
+  <head>
+    <meta name = "viewport" content = "width = device-width, initial-scale = 1">
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.0/dropzone.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.0/dropzone.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <link rel="icon" type = "image/png" href = "/favicon.ico"/>
+  </head>
+
+  <script>
+
+    var stop;
+
+    async function popUp(image_id) {
+      var wrapper_str = "explanation";
+      var image_str = "image-explanation";
+      var text_str = "text-explanation";
+      var wrapper = document.getElementById(wrapper_str.concat(image_id));
+      var image = document.getElementById(image_str.concat(image_id));
+      var text = document.getElementById(text_str.concat(image_id));
+      wrapper.style.display = "grid";
+      text.style.display = "table-cell";
+      image.src = image_id + '.gif';
+      text.innerHTML = "Rescale image to 224x224 pixels.";
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function changeText(image_id) {
+      stop = false;
+      var text_str = "text-explanation";
+      var text = document.getElementById(text_str.concat(image_id));
+      var image_str = "image-explanation";
+      var image = document.getElementById(image_str.concat(image_id));
+      var original_image = image.src;
+      await popUp(image_id);
+      var phrases = ["Calculate brightness, constrast and color.", "Segment image: most likely background & foreground.",
+      "Detect edges: sharpness per segment.", "Image saliency: most important region.",
+      "Threshold saliency and calculate point of mass.", "Crop original image with this point as center point.",
+      "Calculate noise and sharpness in more detail.", "Calculate noise and sharpness in more detail.", "Rescale image to 224x224 pixels."];
+      var i;
+      while (stop === false) {
+        for (i = 0; i < phrases.length; i++) {
+          if (stop === true) {
+            image.src = original_image;
+            break;
+          }
+          await sleep(2000)
+          text.innerHTML = phrases[i];
+        }
+      }
+    }
+
+    function hidePopUp(image) {
+      var class_str = "explanation";
+      stop = true;
+      document.getElementById(class_str.concat(image)).style.display = "none";
+    }
+
+    function showModel(group = '0') {
+      var model_selection = document.getElementById('modelSelection'), children;
+      if (group != '0') {
+        $('#modelSelection').hide();
+        $('#modelSelection').next(".select2-container").hide();
+        if (group == '1'){
+          $('#featureSelection').hide();
+          $('#featureSelection').next(".select2-container").hide();
+        }
+      }
+    }
+
+    function selectModel(group = '0') {
+      var model_selection = document.getElementById('modelSelection');
+      var explanation_buttons = document.getElementsByClassName('mini-button');
+      if (group === '0') {
+        var model = model_selection.options[model_selection.selectedIndex].value;
+      } else {
+        var model = group;
+      }
+      var feature_selection = document.getElementById('featureSelection');
+      if (model === '1') {
+        $("#imageGrid").load('/dl-ranking');
+        setTimeout(function() {
+          feature_selection.style.display = "none";
+          for (var i = 0; i < explanation_buttons.length; i++) {
+            explanation_buttons[i].style.display = "none";
+          }
+        }, 750)
+      } else {
+        setTimeout(function() {
+          feature_selection.style.display = "grid";
+          for (var i = 0; i < explanation_buttons.length; i++) {
+            explanation_buttons[i].style.display = "block";
+          }
+          selectFeatures();
+        }, 100)
+      }
+    }
+
+    function selectFeatures() {
+      var features_selected = [];
+      $.each($("#featureSelection option:selected"), function() {
+        features_selected.push($(this).val());
+      });
+      var features_selected_JSON = JSON.stringify(features_selected);
+      updateFeatures(features_selected_JSON);
+      setTimeout(function() {
+        place_arrows();
+      }, 2000);
+    }
+
+    function updateFeatures(features_selected_JSON) {
+      $("#imageGrid").load('/new-ranking', {"selected[]": features_selected_JSON });
+    }
+
+  </script>
+
+  <script>
+
+    $(document).ready(function() {
+      $('.select2').select2({
+        minimumResultsForSearch: "-1"
+      });
+    });
+
+    $(document).on('touchend', function() {
+      $("select2-search, .select2-search--inline .select2-focusser, .select2-search__field").remove();
+    })
+
+    $(document).ready(function() {
+      var cookie_group = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('user_group'))
+      .split('=')[1];
+      showModel(cookie_group);
+      selectModel(cookie_group);
+    });
+  </script>
+
+  <body class="body">
+
+    <div align="center" width = "100%" class = "ranking-grid">
+
+    <div class = "header">
+      <a href = "/2">
+        <img height = "100%" src = 'static/logo.svg'></img>
+      </a>
+    </div>
+
+    <div class = "subheader" >
+
+      <select class = "select2 override-slection" id = "modelSelection" onChange = selectModel()>
+        <option value="2" selected>Model A</option>
+        <option value="1">Model 1</option>
+      </select>
+
+      <div id = "featureSelection" class = "override-selection">
+        <select class = "select2" multiple = "multiple" onChange = selectFeatures()>
+          <option value="brightness" selected>brightness</option>
+          <option value="contrast" selected>contrast</option>
+          <option value="color" selected>color</option>
+          <option value="sharpness" selected>sharpness</option>
+          <option value="noise" selected>noise</option>
+        </select>
+      </div>
+    </div>
+
+      <div class = "image-grid" id = "imageGrid" onload = "place_arrows()">
+
+        {% for image in images %}
+
+        <div class = "image-wrapper">
+
+          <img class = "image-content" src="{{image[0]}}.jpg"></img>
+
+          <div class = "image-overlay">
+            <p class = "score">{{image[1]}}</p>
+            <button onclick="changeText('{{image[0]}}')" class = "mini-button" id = "explanation-button">EXPLANATION</button>
+          </div>
+
+          <div class = "explanation" id = "explanation{{image[0]}}" onclick="hidePopUp('{{image[0]}}')">
+            <div class = "margin-explanation">
+              <img class = "image-explanation" id = "image-explanation{{image[0]}}" src={{image[0].gif}}></img>
+              <div class = "box-process">
+                <div class = "table-text">
+                  <p class = "text-explanation" id = "text-explanation{{image[0]}}"> Rescale image to 224x224 pixels. </p>
+                </div>
+                <div class = "green-bar"></div>
+              </div>
+            </div>
+            <div class = "margin-explanation">
+              <div class = "box-considerations">
+                <table>
+                  <tr>
+                    <td>Base score</td>
+                    <td>{{image[2][0]}}</td>
+                  </tr>
+                  <tr class = "consideration-items" id = "testtesttest">
+                    <td>Brightness</td>
+                    <td>{{image[2][1]['brightness']}}</td>
+                    <td>↑</td>
+                  </tr>
+                  <tr>
+                    <td>Contrast</td>
+                    <td>{{image[2][1]['contrast']}}</td>
+                    <td>↑</td>
+                  </tr>
+                  <tr>
+                    <td>Color</td>
+                    <td>{{image[2][1]['color']}}</td>
+                    <td>↑</td>
+                  </tr>
+                  <tr>
+                    <td>Sharpness</td>
+                    <td>{{image[2][1]['sharpness']}}</td>
+                    <td>↑</td>
+                  </tr>
+                  <tr>
+                    <td>Noise</td>
+                    <td>{{image[2][1]['noise']}}</td>
+                    <td>↑</td>
+                  </tr>
+                  <tr>
+                    <td>Other</td>
+                    <td>{{image[2][1]['areas']}}</td>
+                    <td>↑</td>
+                  </tr>
+                  <tr>
+                    <td>Final Score</td>
+                    <td>{{image[1]}}</td>
+                  </tr>
+                </table>
+                <div class = "green-bar"></div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {% endfor %}
+
+    <script>
+      window.sr = ScrollReveal();
+      sr.reveal('.image-wrapper', {
+        delay: 600,
+        useDelay: 'onload',
+        reset: false,
+      });
+
+      function place_arrows() {
+        var score_tables = document.getElementsByTagName("table");
+        for (var i = 0; i < score_tables.length; i++) {
+          var rows = score_tables[i].rows;
+          for (var x = 1; x < (rows.length - 1); x++) {
+            cells = rows[x].cells;
+            cells[2].style.fontSize = 'large';
+            var consideration_score = cells[1].innerHTML;
+            var sign = Math.sign(consideration_score);
+            if (sign == 0) {
+              cells[2].innerHTML = '';
+              cells[0].style.color = "#b5b5b5"
+              cells[1].style.color = "#b5b5b5"
+              cells[2].style.color = "#b5b5b5"
+            } else if (sign == 1) {
+              cells[2].innerHTML = '↑'
+              cells[2].style.color = '#13e27a';
+            } else {
+              cells[2].innerHTML = '↓'
+              cells[2].style.color = '#FF4A4A';
+              cells[1].innerHTML = Math.abs(cells[1].innerHTML)
+            }
+          }
+        }
+      }
+
+    </script>
+
+  </body>
+
+</html>

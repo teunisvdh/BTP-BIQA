@@ -1,0 +1,74 @@
+<div class = "image-grid" id = "imageGrid">
+
+  {% for image in images %}
+
+  <div class = "image-wrapper">
+
+    <img class = "image-content" src="{{image[0]}}.jpg"></img>
+
+    <div class = "image-overlay">
+      <p class = "score">{{image[1]}}</p>
+      <button onclick="changeText('{{image[0]}}')" class = "mini-button" id = "explanation-button">explain</button>
+    </div>
+
+    <div class = "explanation" id = "explanation{{image[0]}}" onclick="hidePopUp('{{image[0]}}')">
+      <div class = "margin-explanation">
+        <img class = "image-explanation" id = "image-explanation{{image[0]}}" src={{image[0].gif}}></img>
+        <div class = "box-process">
+          <div class = "table-text">
+            <p class = "text-explanation" id = "text-explanation{{image[0]}}"> Rescale image to 224x224 pixels. </p>
+          </div>
+          <div class = "green-bar"></div>
+        </div>
+      </div>
+      <div class = "margin-explanation">
+        <div class = "box-considerations">
+          <table>
+            <tr>
+              <td>Base score</td>
+              <td>{{image[2][0]}}</td>
+            </tr>
+            <tr class = "consideration-items" id = "testtesttest">
+              <td>Brightness</td>
+              <td>{{image[2][1]['brightness']}}</td>
+              <td>↑</td>
+            </tr>
+            <tr>
+              <td>Contrast</td>
+              <td>{{image[2][1]['contrast']}}</td>
+              <td>↑</td>
+            </tr>
+            <tr>
+              <td>Color</td>
+              <td>{{image[2][1]['color']}}</td>
+              <td>↑</td>
+            </tr>
+            <tr>
+              <td>Sharpness</td>
+              <td>{{image[2][1]['sharpness']}}</td>
+              <td>↑</td>
+            </tr>
+            <tr>
+              <td>Noise</td>
+              <td>{{image[2][1]['noise']}}</td>
+              <td>↑</td>
+            </tr>
+            <tr>
+              <td>Other</td>
+              <td>{{image[2][1]['areas']}}</td>
+              <td>↑</td>
+            </tr>
+            <tr>
+              <td>Final Score</td>
+              <td>{{image[1]}}</td>
+            </tr>
+          </table>
+          <div class = "green-bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endfor %}
+
+</div>

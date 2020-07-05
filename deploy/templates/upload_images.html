@@ -1,0 +1,33 @@
+<html>
+
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.0/dropzone.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.0/dropzone.css">
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
+    <link rel="icon" type = "image/png" href = "/favicon.ico"/>
+  </head>
+
+  <script>
+  Dropzone.options.DropZoneUpload = {
+    dictDefaultMessage: "Please upload your images by clicking here.",
+    thumbnailWidth: 400,
+    thumbnailHeight: 400,
+    thumbnailMethod: "contain",
+    acceptedFiles: ".jpeg, .jpg, .png",
+    maxFiles: 12,
+    resizeWidth: 1024,
+    capture: "image/*",
+  };
+  </script>
+
+  <body class="body">
+    <div align="center" class="upload-grid">
+      <div class = "header" >
+        <img height = "100%" src = 'static/logo.svg'></img>
+      </div>
+      <form action="/file-upload" class="dropzone override" id = "DropZoneUpload"></form>
+      <a class = "button" href="/ranking"> GET RANKING </a>
+    </div>
+  </body>
+
+</html>
