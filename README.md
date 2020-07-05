@@ -18,11 +18,12 @@
     *	Users prefer a model that is transparent, explainable and adaptable to their needs.
 
 ##### Main contents of this repository 
-
-* Clean Quality Decision Tree.ipynb: *Training the technical quality decision tree by extracting 16 features.* 
-* Clean Aesthetics Decision Tree.ipynb: *Training the aesthetic quality decision tree by extracting 23 features.*
-* Aesthetics Dataset Web Scraper.ipynb: *Compiling a dataset based on dpchallenge.com, the original source of AVA, in order to control image content based on several keywords (social events).*   
-* deploy (folder): *Final web application. Additional languages: JavaScript, CSS and HTML. Feature extraction functions can be found in helpers.py. This folder originally included KonCept224 and the kutils package introduced by Hosu et al. (2020). Please download these files from the original source before running the code.* 
-* BTP-BIQA Experiment.ipynb: *Google Colab Notebook: setting up a local server for the deploy package and sharing it using Ngrok.*
-* BTP-BIQA used in app.sav: *The exact configuration of the technical quality decision tree as used in the web application.*
-* Survey Results Translated.csv: *A machine translation of the survey results. Names/email addresses were deleted.*
+| File | Description |
+| --- | --- |
+| Clean Quality Decision Tree.ipynb | Training the technical quality decision tree by extracting 16 features. | 
+| Clean Aesthetics Decision Tree.ipynb | Training the aesthetic quality decision tree by extracting 23 features. |
+| Aesthetics Dataset Web Scraper.ipynb | Compiling a dataset based on dpchallenge.com, the original source of AVA, in order to control image content based on several keywords (social events). |
+| deploy (folder) | Final web application. Additional languages: JavaScript, CSS and HTML. Feature extraction functions can be found in helpers.py. This folder originally included KonCept224 and the kutils package introduced by Hosu et al. (2020). Please download these files from the original source before running the code. |
+| BTP-BIQA Experiment.ipynb | Google Colab Notebook: setting up a local server for the deploy package and sharing it using Ngrok. |
+| BTP-BIQA used in app.sav | The exact configuration of the technical quality decision tree as used in the web application. |
+| Survey Results Translated.csv | A machine translation of the survey results. Names/email addresses were deleted. |
